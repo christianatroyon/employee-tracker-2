@@ -364,12 +364,12 @@ function addToRole(department){
         },
         {
           type: "list",
-          name: "department",
+          name: "department_name",
           message: "Department: ",
-          choices: department
+          choices: department_name
         },
       ]).then((res)=>{
-        let query = `INSERT INTO role SET ?`;
+        let query = `INSERT INTO roles SET ?`;
   
         connection.query(query, {
             title: res.title,
@@ -388,14 +388,13 @@ function addDepartment(){
     .prompt([
       {
         type: "input",
-        name: "name",
+        name: "department_name",
         message: "Department Name: "
       }
     ]).then((res)=>{
     let query = `INSERT INTO department SET ?`;
-    connection.query(query, {name: res.name},(err, res)=>{
+    connection.query(query, {name: res.department_name},(err, res)=>{
       if(err) throw err;
-      //console.log(res);
       mainPrompt();
     });
   });
