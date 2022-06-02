@@ -24,3 +24,6 @@ Database schema containing three tables:
   * **role_id** - INT (reference to employee's role)
   * **manager_id** - INT (reference to employee's manager)
   ```
+
+### Issues
+I had another version of this homework assignment in Github and forgot my gitignore file. I could not figure out the error after spending a lot of time (too much time) trying to solve this issue. I decided just to copy my code over into this new repo to simplify things. This is why there are virtually no commits like there would normally be. I just kept working on the assignment between each attempt to resolve the github repo issue.
