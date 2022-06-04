@@ -107,20 +107,14 @@ const connection = mysql.createConnection(
 function viewEmployeesByDepartment(){
     let query =
     `SELECT 
-        department.id, 
-        department.department_name, 
-        roles.salary
-    FROM employee
-    LEFT JOIN roles
-        ON employee.role_id = roles.id
-    LEFT JOIN department
-        ON department.id = roles.department_id
-    GROUP BY department.id, department.department_name, roles.salary`;
+    id, 
+    department_name
+  FROM department;`;
   
   connection.query(query,(err, res)=>{
       if (err) throw err;
       const deptChoices = res.map((choices) => ({
-          value: choices.id, name: choices.name
+          value: choices.id, name: choices.department_name
       }));
     console.table(res);
     getDept(deptChoices);
@@ -152,8 +146,8 @@ function getDept(deptChoices){
   
         connection.query(query, res.department,(err, res)=>{
         if(err)throw err;
-          mainPrompt();
           console.table(res);
+          mainPrompt();
         });
     })
 }
@@ -164,15 +158,15 @@ function addEmployee() {
     `SELECT 
         roles.id, 
         roles.title, 
-        roles.salary 
-    FROM roles`
+        roles.salary,
+        department.department_name
+    FROM roles inner JOIN department ON roles.department_id=department.id`
 
  connection.query(query,(err, res)=>{
     if(err)throw err;
-    const role = res.map(({ id, title, salary }) => ({
+    const role = res.map(({ id, title, salary, department_name }) => ({
       value: id, 
-      title: `${title}`, 
-      salary: `${salary}`
+      name: `${title} ${salary} ${department_name}`
     }));
 
     console.table(res);
@@ -328,23 +322,18 @@ function getUpdatedRole(employee, roleChoices) {
 function addRole(){
     var query = 
     `SELECT 
-      department.id, 
-      department.department_name, 
-      roles.salary
-    FROM employee
-    JOIN roles
-      ON employee.role_id = roles.id
-    JOIN department
-      ON department.id = roles.department_id
-    GROUP BY department.id, department.department_name`
+      id, 
+      department_name
+    FROM department;`;
   
     connection.query(query,(err, res)=>{
       if(err)throw err;
-      const department = res.map(({ id, name }) => ({
+      const department = res.map(({ id, department_name }) => ({
         value: id,
-        name: `${id} ${name}`
+        name: `${id} ${department_name}`
       }));
       console.table(res);
+      console.log(department);
       addToRole(department);
     });
 }
@@ -366,7 +355,7 @@ function addToRole(department){
           type: "list",
           name: "department_name",
           message: "Department: ",
-          choices: department_name
+          choices: department
         },
       ]).then((res)=>{
         let query = `INSERT INTO roles SET ?`;
@@ -393,7 +382,7 @@ function addDepartment(){
       }
     ]).then((res)=>{
     let query = `INSERT INTO department SET ?`;
-    connection.query(query, {name: res.department_name},(err, res)=>{
+    connection.query(query, {department_name: res.department_name},(err, res)=>{
       if(err) throw err;
       mainPrompt();
     });
